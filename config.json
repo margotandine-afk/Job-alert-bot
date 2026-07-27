@@ -1,0 +1,69 @@
+{
+  "_comment": "Two independent source types below. aggregator_searches hits TheMuse.com (confirmed reliable, plain server-rendered HTML) with broad keyword+location searches, then the script keeps only lines mentioning one of target_companies. direct_firm_urls hits each firm's own career site directly as a second layer -- verify/replace these yourselves since bank career sites change structure often and several (Goldman, BlackRock, Blackstone) render listings via JavaScript, which is why the script uses a real headless browser (Playwright) to load them, not a plain fetch.",
+
+  "keywords": [
+    "investment banking analyst",
+    "capital markets analyst",
+    "equity research analyst",
+    "IB analyst",
+    "global markets analyst",
+    "corporate finance analyst"
+  ],
+
+  "target_companies": [
+    "Morgan Stanley",
+    "Goldman Sachs",
+    "Citi",
+    "Bank of America",
+    "Barclays",
+    "Evercore",
+    "PIMCO",
+    "BlackRock",
+    "Blackstone"
+  ],
+
+  "aggregator_searches": [
+    "https://www.themuse.com/hiring/location/new-york-ny/keyword/investment-banking-analyst",
+    "https://www.themuse.com/hiring/location/new-york-ny/keyword/capital-markets-analyst",
+    "https://www.themuse.com/hiring/location/new-york-ny/keyword/equity-research-analyst"
+  ],
+
+  "direct_firm_urls": [
+    {
+      "name": "Goldman Sachs",
+      "url": "https://higher.gs.com/results?LOCATION=New%20York&EXPERIENCE_LEVEL=New%20Analyst"
+    },
+    {
+      "name": "Morgan Stanley",
+      "url": "https://morganstanley.tal.net/vx/candidate/cms/careers?keywords=analyst&location=New%20York"
+    },
+    {
+      "name": "Citi",
+      "url": "https://jobs.citi.com/search-jobs/investment%20banking%20analyst/59835/1"
+    },
+    {
+      "name": "Bank of America",
+      "url": "https://careers.bankofamerica.com/en-us/job-search?keyword=investment%20banking%20analyst&location=New%20York"
+    },
+    {
+      "name": "Barclays",
+      "url": "https://search.jobs.barclays/search-jobs/investment%20banking%20analyst/New%20York"
+    },
+    {
+      "name": "Evercore",
+      "url": "https://www.evercore.com/careers/open-positions/"
+    },
+    {
+      "name": "PIMCO",
+      "url": "https://careers.pimco.com/global/en/search-results?keywords=analyst"
+    },
+    {
+      "name": "BlackRock",
+      "url": "https://careers.blackrock.com/job-search-results/?location=New%20York&keywords=analyst"
+    },
+    {
+      "name": "Blackstone",
+      "url": "https://www.blackstone.com/careers/join-us/job-search/?keyword=analyst"
+    }
+  ]
+}
