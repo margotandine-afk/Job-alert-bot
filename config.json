@@ -1,13 +1,18 @@
 {
   "_comment": "Two independent source types below. aggregator_searches hits TheMuse.com (confirmed reliable, plain server-rendered HTML) with broad keyword+location searches, then the script keeps only lines mentioning one of target_companies. direct_firm_urls hits each firm's own career site directly as a second layer -- verify/replace these yourselves since bank career sites change structure often and several (Goldman, BlackRock, Blackstone) render listings via JavaScript, which is why the script uses a real headless browser (Playwright) to load them, not a plain fetch.",
 
-  "keywords": [
-    "investment banking analyst",
-    "capital markets analyst",
-    "equity research analyst",
-    "IB analyst",
-    "global markets analyst",
-    "corporate finance analyst"
+  "role_terms": [
+    "analyst"
+  ],
+
+  "domain_terms": [
+    "investment banking",
+    "capital markets",
+    "equity research",
+    "corporate finance",
+    "global markets",
+    "M&A",
+    "mergers"
   ],
 
   "target_companies": [
