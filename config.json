@@ -2,7 +2,13 @@
   "_comment": "Two independent source types below. aggregator_searches hits TheMuse.com (confirmed reliable, plain server-rendered HTML) with broad keyword+location searches, then the script keeps only lines mentioning one of target_companies. direct_firm_urls hits each firm's own career site directly as a second layer -- verify/replace these yourselves since bank career sites change structure often and several (Goldman, BlackRock, Blackstone) render listings via JavaScript, which is why the script uses a real headless browser (Playwright) to load them, not a plain fetch.",
 
   "role_terms": [
-    "analyst"
+    "analyst",
+    "graduate program",
+    "graduate scheme",
+    "off-cycle",
+    "off cycle",
+    "internship",
+    "intern"
   ],
 
   "domain_terms": [
@@ -11,8 +17,28 @@
     "equity research",
     "corporate finance",
     "global markets",
+    "global banking",
+    "GBM",
     "M&A",
-    "mergers"
+    "mergers",
+    "leveraged finance",
+    "financial institutions group",
+    "ECM",
+    "DCM",
+    "sponsors coverage",
+    "banking and markets"
+  ],
+
+  "_stale_year_comment": "Lines mentioning any of these are dropped even if they otherwise match -- these are prior recruiting cycles (already started or starting before summer 2027), which you don't want alerts for.",
+  "stale_year_terms": [
+    "2023",
+    "2024",
+    "2025",
+    "2026",
+    "class of 2025",
+    "class of 2026",
+    "summer 2025",
+    "summer 2026"
   ],
 
   "target_companies": [
@@ -30,7 +56,9 @@
   "aggregator_searches": [
     "https://www.themuse.com/hiring/location/new-york-ny/keyword/investment-banking-analyst",
     "https://www.themuse.com/hiring/location/new-york-ny/keyword/capital-markets-analyst",
-    "https://www.themuse.com/hiring/location/new-york-ny/keyword/equity-research-analyst"
+    "https://www.themuse.com/hiring/location/new-york-ny/keyword/equity-research-analyst",
+    "https://www.themuse.com/hiring/location/new-york-ny/keyword/investment-banking-graduate-program",
+    "https://www.themuse.com/hiring/location/new-york-ny/keyword/off-cycle-internship-investment-banking"
   ],
 
   "direct_firm_urls": [
