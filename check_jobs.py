@@ -30,7 +30,7 @@ def load_config():
         return json.load(f)
 
 
-def fetch_text_lines(page, url, wait_ms=4000):
+def fetch_text_lines(page, url, wait_ms=8000):
     """Load a page in a real (headless) browser, wait for JS to render the
     job listings, and return a list of visible text lines (deduped, stripped).
     Using a real browser instead of a plain HTTP fetch is what makes this
@@ -38,7 +38,8 @@ def fetch_text_lines(page, url, wait_ms=4000):
     their job listings client-side with JavaScript.
     """
     page.goto(url, timeout=45000, wait_until="domcontentloaded")
-    # Give client-side rendering time to populate the job list.
+    # Give client-side rendering time to populate the job list. Some career
+    # sites (e.g. Citi) are slower than others, so this is generous.
     page.wait_for_timeout(wait_ms)
 
     text = page.inner_text("body")
@@ -54,9 +55,41 @@ def fetch_text_lines(page, url, wait_ms=4000):
     return out
 
 
-def matches_keywords(line, keywords):
+# Lines containing any of these are page chrome / summary text, not actual
+# job postings -- drop them even if they happen to contain a keyword.
+NOISE_PATTERNS = [
+    r"\bresults? found\b",
+    r"\bresults? for\b",
+    r"^\d+\s+(results?|jobs?)\b",
+    r"\bno (results?|jobs?|matches) found\b",
+    r"\bsearch (results?|jobs?)\b",
+    r"\bfilter\b",
+    r"\bsort by\b",
+    r"\bshowing \d+",
+    r"\bpage \d+ of \d+\b",
+    r"\bsubscribe\b",
+    r"\bcreate (a |an )?(job )?alert\b",
+    r"\bsign in\b",
+    r"\bcookie\b",
+]
+
+
+def is_noise(line):
     low = line.lower()
-    return any(kw.lower() in low for kw in keywords)
+    return any(re.search(pat, low) for pat in NOISE_PATTERNS)
+
+
+def matches_keywords(line, role_terms, domain_terms):
+    """A line counts as a match if it contains an analyst-type role term
+    AND a relevant domain term -- not necessarily as one exact phrase.
+    This catches titles like 'Analyst, Equity Capital Markets' or
+    'Investment Banking - M&A - Analyst' that a single fixed phrase like
+    "investment banking analyst" would miss.
+    """
+    low = line.lower()
+    has_role = any(rt.lower() in low for rt in role_terms)
+    has_domain = any(dt.lower() in low for dt in domain_terms)
+    return has_role and has_domain
 
 
 def load_previous_state(firm_key):
@@ -84,10 +117,15 @@ def send_email(subject, body, to_addr, from_addr, app_password):
         server.sendmail(from_addr, [to_addr], msg.as_string())
 
 
-def check_source(page, source_key, url, keywords, company_filter=None):
-    """Fetch one URL, return (matching_lines, new_lines_vs_last_run)."""
+def check_source(page, source_key, url, role_terms, domain_terms, company_filter=None):
+    """Fetch one URL, return the lines that are NEW since the last run."""
     lines = fetch_text_lines(page, url)
-    matching = {ln for ln in lines if matches_keywords(ln, keywords)}
+    matching = {
+        ln for ln in lines
+        if matches_keywords(ln, role_terms, domain_terms)
+        and not is_noise(ln)
+        and len(ln) < 200  # drop paragraphs/descriptions, keep title-like lines
+    }
 
     if company_filter:
         matching = {
@@ -103,7 +141,8 @@ def check_source(page, source_key, url, keywords, company_filter=None):
 
 def main():
     config = load_config()
-    keywords = config["keywords"]
+    role_terms = config["role_terms"]
+    domain_terms = config["domain_terms"]
     target_companies = config.get("target_companies", [])
     all_new = {}
 
@@ -122,7 +161,8 @@ def main():
             source_key = f"aggregator_{i}"
             try:
                 new_lines = check_source(
-                    page, source_key, url, keywords, company_filter=target_companies
+                    page, source_key, url, role_terms, domain_terms,
+                    company_filter=target_companies,
                 )
             except Exception as e:
                 print(f"[WARN] aggregator search {url}: failed ({e})")
@@ -137,7 +177,7 @@ def main():
             url = firm["url"]
             firm_key = re.sub(r"[^a-z0-9]+", "_", name.lower())
             try:
-                new_lines = check_source(page, firm_key, url, keywords)
+                new_lines = check_source(page, firm_key, url, role_terms, domain_terms)
             except Exception as e:
                 print(f"[WARN] {name}: failed to fetch ({e})")
                 continue
