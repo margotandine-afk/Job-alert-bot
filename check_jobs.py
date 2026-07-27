@@ -42,9 +42,28 @@ def fetch_postings(page, url, wait_ms=8000):
     etc.) that render their job listings client-side with JavaScript.
     """
     page.goto(url, timeout=60000, wait_until="domcontentloaded")
+
+    # Many career sites show a cookie-consent banner that blocks the real
+    # content from rendering (or from being clickable) until dismissed.
+    # Try a handful of common button labels; ignore failures since not
+    # every site has one.
+    for label in ["Accept", "Accept All", "Accept all cookies", "I Accept",
+                  "Allow all", "Agree", "Got it"]:
+        try:
+            page.get_by_role("button", name=label, exact=False).click(timeout=2000)
+            break
+        except Exception:
+            continue
+
     # Give client-side rendering time to populate the job list. Some career
     # sites (e.g. Citi) are slower than others, so this is generous.
     page.wait_for_timeout(wait_ms)
+
+    # Some sites lazy-load job cards only as you scroll (infinite scroll).
+    # Scroll down a couple of times to trigger that before reading links.
+    for _ in range(3):
+        page.mouse.wheel(0, 2000)
+        page.wait_for_timeout(1000)
 
     # Pull every link's visible text and absolute href directly from the DOM.
     # This is what lets us attach a clickable URL to each matched posting,
