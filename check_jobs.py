@@ -41,7 +41,7 @@ def fetch_postings(page, url, wait_ms=8000):
     what makes this work on career sites (Goldman, BlackRock, Blackstone,
     etc.) that render their job listings client-side with JavaScript.
     """
-    page.goto(url, timeout=45000, wait_until="domcontentloaded")
+    page.goto(url, timeout=60000, wait_until="domcontentloaded")
     # Give client-side rendering time to populate the job list. Some career
     # sites (e.g. Citi) are slower than others, so this is generous.
     page.wait_for_timeout(wait_ms)
@@ -144,9 +144,10 @@ def send_email(subject, body, to_addr, from_addr, app_password):
 
 
 def check_source(page, source_key, url, role_terms, domain_terms, stale_year_terms,
-                  company_filter=None):
+                  company_filter=None, label=None):
     """Fetch one URL, return a dict of {title_text: href} that is NEW
     since the last run."""
+    label = label or source_key
     postings = fetch_postings(page, url)
 
     matching = {}
@@ -163,6 +164,17 @@ def check_source(page, source_key, url, role_terms, domain_terms, stale_year_ter
         if company_filter and not any(c.lower() in text.lower() for c in company_filter):
             continue
         matching[text] = href
+
+    # Diagnostic: shows up in the Actions log every run, so you can see
+    # whether a source is finding zero links at all (page didn't load /
+    # selector issue), finding links but zero matches (keyword/structure
+    # mismatch -- e.g. title text isn't inside the <a> tag), or working
+    # normally.
+    print(f"[INFO] {label}: {len(postings)} links found on page, "
+          f"{len(matching)} matched your keywords")
+    if postings and not matching:
+        sample = [p["text"][:80] for p in postings[:5] if p["text"]]
+        print(f"[INFO] {label}: sample of link text seen (first 5): {sample}")
 
     previous = load_previous_state(source_key)
     new_postings = {text: href for text, href in matching.items() if text not in previous}
@@ -195,7 +207,7 @@ def main():
             try:
                 new_postings = check_source(
                     page, source_key, url, role_terms, domain_terms, stale_year_terms,
-                    company_filter=target_companies,
+                    company_filter=target_companies, label=f"TheMuse search #{i+1}",
                 )
             except Exception as e:
                 print(f"[WARN] aggregator search {url}: failed ({e})")
@@ -211,7 +223,8 @@ def main():
             firm_key = re.sub(r"[^a-z0-9]+", "_", name.lower())
             try:
                 new_postings = check_source(
-                    page, firm_key, url, role_terms, domain_terms, stale_year_terms
+                    page, firm_key, url, role_terms, domain_terms, stale_year_terms,
+                    label=name,
                 )
             except Exception as e:
                 print(f"[WARN] {name}: failed to fetch ({e})")
