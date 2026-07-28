@@ -1,6 +1,5 @@
 {
-  "_comment": "Two independent source types below. aggregator_searches hits TheMuse.com (confirmed reliable, plain server-rendered HTML) with broad keyword+location searches, then the script keeps only lines mentioning one of target_companies. direct_firm_urls hits each firm's own career site directly as a second layer -- verify/replace these yourselves since bank career sites change structure often and several (Goldman, BlackRock, Blackstone) render listings via JavaScript, which is why the script uses a real headless browser (Playwright) to load them, not a plain fetch.",
-
+  "_comment": "Two independent source types below. aggregator_searches hits TheMuse.com (confirmed reliable, plain server-rendered HTML) with broad keyword+location searches, then the script keeps only lines mentioning one of target_companies. direct_firm_urls hits each firm's own career site directly as a second layer -- verify/replace these yourselves since bank/fund career sites change structure often and several (Goldman, BlackRock, Blackstone) render listings via JavaScript, which is why the script uses a real headless browser (Playwright) to load them, not a plain fetch.",
   "role_terms": [
     "analyst",
     "graduate program",
@@ -8,9 +7,17 @@
     "off-cycle",
     "off cycle",
     "internship",
-    "intern"
+    "intern",
+    "part-time",
+    "part time",
+    "spring analyst",
+    "school year",
+    "academic year",
+    "semester internship",
+    "student analyst",
+    "campus part time",
+    "co-op"
   ],
-
   "domain_terms": [
     "investment banking",
     "capital markets",
@@ -26,21 +33,32 @@
     "ECM",
     "DCM",
     "sponsors coverage",
-    "banking and markets"
+    "banking and markets",
+    "venture capital",
+    "private equity",
+    "hedge fund",
+    "asset management",
+    "wealth management",
+    "family office",
+    "fund of funds",
+    "portfolio management",
+    "business development",
+    "investment analyst"
   ],
-
-  "_stale_year_comment": "Lines mentioning any of these are dropped even if they otherwise match -- these are prior recruiting cycles (already started or starting before summer 2027), which you don't want alerts for.",
+  "_stale_year_comment": "Lines mentioning any of these are dropped even if they otherwise match -- these are prior/already-passed recruiting cycles. NOTE: bare years like '2026' were removed on purpose -- since it's currently mid-2026, blanket-dropping any line with '2026' in it would also wipe out valid 'Fall 2026' / '2026-2027 academic year' school-year internship postings you actually want. Only specific already-completed cycles are listed instead.",
   "stale_year_terms": [
-    "2023",
-    "2024",
-    "2025",
-    "2026",
+    "class of 2023",
+    "class of 2024",
     "class of 2025",
-    "class of 2026",
+    "summer 2023",
+    "summer 2024",
     "summer 2025",
-    "summer 2026"
+    "summer 2026",
+    "spring 2025",
+    "spring 2026",
+    "fall 2024",
+    "fall 2025"
   ],
-
   "target_companies": [
     "Morgan Stanley",
     "Goldman Sachs",
@@ -50,17 +68,44 @@
     "Evercore",
     "PIMCO",
     "BlackRock",
-    "Blackstone"
+    "Blackstone",
+    "Insight Partners",
+    "Union Square Ventures",
+    "Tiger Global",
+    "Thrive Capital",
+    "General Catalyst",
+    "Two Sigma",
+    "Point72",
+    "Citadel",
+    "Centerview",
+    "Guggenheim",
+    "CVC",
+    "Ardian",
+    "Providence Equity",
+    "KKR",
+    "Lerer Hippeau",
+    "FirstMark Capital",
+    "JPMorgan",
+    "Deutsche Bank",
+    "UBS",
+    "Mizuho",
+    "Nomura",
+    "Macquarie",
+    "Houlihan Lokey",
+    "HSBC"
   ],
-
   "aggregator_searches": [
     "https://www.themuse.com/hiring/location/new-york-ny/keyword/investment-banking-analyst",
     "https://www.themuse.com/hiring/location/new-york-ny/keyword/capital-markets-analyst",
     "https://www.themuse.com/hiring/location/new-york-ny/keyword/equity-research-analyst",
     "https://www.themuse.com/hiring/location/new-york-ny/keyword/investment-banking-graduate-program",
-    "https://www.themuse.com/hiring/location/new-york-ny/keyword/off-cycle-internship-investment-banking"
+    "https://www.themuse.com/hiring/location/new-york-ny/keyword/off-cycle-internship-investment-banking",
+    "https://www.themuse.com/hiring/location/new-york-ny/keyword/venture-capital-analyst",
+    "https://www.themuse.com/hiring/location/new-york-ny/keyword/private-equity-analyst",
+    "https://www.themuse.com/hiring/location/new-york-ny/keyword/investment-analyst",
+    "https://www.themuse.com/hiring/location/new-york-ny/keyword/finance-internship",
+    "https://www.themuse.com/hiring/location/new-york-ny/keyword/part-time-internship"
   ],
-
   "direct_firm_urls": [
     {
       "name": "Goldman Sachs",
@@ -97,6 +142,26 @@
     {
       "name": "Blackstone",
       "url": "https://www.blackstone.com/careers/join-us/job-search/?keyword=analyst"
+    },
+    {
+      "name": "Union Square Ventures",
+      "url": "https://jobs.usv.com/jobs"
+    },
+    {
+      "name": "Insight Partners",
+      "url": "https://www.insightpartners.com/careers/open-positions/"
+    },
+    {
+      "name": "JPMorgan",
+      "url": "https://careers.jpmorgan.com/us/en/students/programs"
+    },
+    {
+      "name": "Deutsche Bank",
+      "url": "https://careers.db.com/students-graduates/Search-Programmes/"
+    },
+    {
+      "name": "UBS",
+      "url": "https://www.ubs.com/global/en/careers/search-jobs.html"
     }
   ]
 }
