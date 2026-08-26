@@ -2,9 +2,8 @@ name: Check analyst job postings
 
 on:
   schedule:
-    # Runs every 2 hours. Adjust cron as needed (this is UTC time).
-    - cron: "0 */2 * * *"
-  workflow_dispatch: {}  # lets you trigger it manually from the Actions tab
+    - cron: '0 9 * * *'
+  workflow_dispatch:
 
 jobs:
   check-jobs:
